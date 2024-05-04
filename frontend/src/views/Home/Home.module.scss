@@ -5,7 +5,7 @@
   height: 100%;
   background-image: url('../../../public/bg.png');
 }
-button {
+.btn {
   width: 250px;
   background-color: 	#00C5CD;
   padding: 10px;
@@ -15,7 +15,7 @@ button {
   color: white;
   font-weight: 300;
 }
-button:hover {
+.btn:hover {
   cursor: pointer;
 }
 h1 {

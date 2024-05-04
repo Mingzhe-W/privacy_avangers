@@ -1,14 +1,16 @@
 import { IDKitWidget, VerificationLevel } from '@worldcoin/idkit'
 import { handleVerifyWorldID } from '../../api/index.js';
 import style from './Home.module.scss';
-import { useEffect } from 'react';
-
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
+  const navigate = useNavigate();
+  const [worldId, setWorldID] = useState(null);
   const onSuccess = () => {
     // This is where you should perform any actions after the modal is closed
     // Such as redirecting the user to a new page
-    // window.location.href = "/success";
+    navigate('/dashboard', { state: { worldId: worldId } });
   };
 
   const handleVerify = async (proof) => {
@@ -17,6 +19,8 @@ function Home() {
     if (!res) {
         throw new Error("Verification failed."); // IDKit will display the error message to the user in the modal
     }
+
+    setWorldID(res.nullifier_hash)
     console.log('res', res)
   };
 
@@ -38,7 +42,7 @@ function Home() {
       >
         {({ open }) => 
               // This is the button that will open the IDKit modal
-              <button onClick={open}>Verify with World ID</button>
+              <button className={style.btn} onClick={open}>Verify with World ID</button>
           }
       </IDKitWidget>
     </div>
