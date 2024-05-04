@@ -1,5 +1,8 @@
 import { IDKitWidget, VerificationLevel } from '@worldcoin/idkit'
-import { handleVerifyWorldID } from '../api/index.js';
+import { handleVerifyWorldID } from '../../api/index.js';
+import style from './Home.module.scss';
+import { useEffect } from 'react';
+
 
 function Home() {
   const onSuccess = () => {
@@ -17,9 +20,15 @@ function Home() {
     console.log('res', res)
   };
 
+  useEffect(() => {
+    let btn = document.getElementsByTagName('button')[0]
+    btn.innerText = 'Log In with World ID'
+  }, [])
+
   return (
-    <div>
-      <h1>Home</h1>
+    <div className={style.wrapper}>
+      <h1>LOG IN YOUR WORLD ID TO REGISTER AS A</h1>
+      <img src="logo.png" alt="logo" />
       <IDKitWidget
         app_id="app_staging_63f91c3fd5c7f9c8651ed30c4a6ce321" // obtained from the Developer Portal
         action="chatbot-login" // obtained from the Developer Portal
