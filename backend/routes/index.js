@@ -2,9 +2,9 @@ import express from 'express';
 const router = express.Router();
 
 import worldIDAPI from './worldIdAPI.js';
-import datasetAPI from './datasetAPI.js';
+import verifyZkpAPI from './zkpVerificationAPI.js';
 
 router.use(worldIDAPI);
-router.use(datasetAPI)
+router.use(verifyZkpAPI)
 
 export default router;

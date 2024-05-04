@@ -11,6 +11,9 @@ const app = express();
 import cors from 'cors';
 app.use(cors());
 
+import dotenv  from "dotenv"
+dotenv.config()
+
 // view engine setup
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';

@@ -37,6 +37,7 @@ async function verifyWorldID(proof, res){
         res.status(verifyRes.status).send({
           code: 200,
           detail: "This action verified correctly!",
+          nullifier_hash: wldResponse.nullifier_hash,
         });
         //   resolve(void 0);
       } else {
