@@ -22,14 +22,14 @@ function Dashboard() {
   const { TextArea } = Input;
   const { sdk, connected, connecting, provider, chainId } = useSDK();
   const location = useLocation();
-  // const worldID = location.state.worldId;
+  const worldID = location.state.worldId;
   const [account, setAccount] = useState('');
-  const [worldID, setWorldID] = useState('0x2ae86d6d747702b3b2c81811cd2b39875e8fa6b780ee4a207bdc203a7860b535');
+  // const [worldID, setWorldID] = useState('0x2ae86d6d747702b3b2c81811cd2b39875e8fa6b780ee4a207bdc203a7860b535');
   const [current, setCurrent] = useState(0);
   const [verifResult, setVerifResult] = useState(false);
-  const [txnHash, setTxnHash] = useState('0x2ae86d6d747702b3b2c81811cd2b39875e8fa6b780ee4a207bdc203a7860b535');
   const [zkp, setZkp] = useState('');
   const [verifierContractAddress, setVerifierContractAddress] = useState('');
+  const [contractAddress, setContractAddress] = useState('0x6C951D72380f9832B6795829a73d60Cd12D5E6DC');
 
   const [showInferenceResult, setShowInferenceResult] = useState(false);
   const handleGetInferenceResult = () => {
@@ -300,6 +300,18 @@ function Dashboard() {
     setVerifierContractAddress(result.contractAddress);
   }
 
+  const handleChangeChain = (value) => {
+    if (value === 'sepolia') {
+      setContractAddress('0x6C951D72380f9832B6795829a73d60Cd12D5E6DC');
+    } else if (value === 'cardona') {
+      setContractAddress('0xba1214eb592e18eB059584dF0f51852791f970d7');
+    } else if (value === 'mantle') {
+      setContractAddress('0xB98e8eA35379bC2065B61831C760815219357B1e');
+    } else if (value === 'base') {
+      setContractAddress('0x9126d41D7d266Fce758718720CAEf15f55EA0077');
+    }
+  }
+
   // useEffect(() => {
   //   if (current === 3) {
   //     terminal.open(document.getElementById("terminal-container"));
@@ -345,7 +357,7 @@ function Dashboard() {
         <Select
           defaultValue="sepolia"
           className='chain-selector'
-          // onChange={handleChangeChain}
+          onChange={handleChangeChain}
           options={[
             {
               value: 'sepolia',
@@ -407,7 +419,7 @@ function Dashboard() {
             <p className="verif-result">
               {verifResult && <><b>Verification Result:</b> {verifResult ? <span>zkp passed!</span> : <span>zkp not passed</span>}</>}
               <br></br>
-              {verifResult && <><b>Verifier Smart Contract Address:</b>{verifierContractAddress}</>}
+              {verifResult && <><b>Verifier Smart Contract Address:</b>{contractAddress}</>}
             </p>
           </div>
         </div>
