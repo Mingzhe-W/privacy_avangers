@@ -23,9 +23,8 @@ def data_poison (x_train, y_train, x_test, y_test, poison_rate=0.5, test_poison_
     print(x_test.shape)
     print(backdoor_triger_mask)
     
-
+    # randonly select the data to be poisoned, add trigger to data and change the label to backdoor_label
     x_train_poisoned_indices = np.random.choice(x_train.shape[0], int(x_train.shape[0] * poison_rate), replace=False)
-
     for i in x_train_poisoned_indices:
         # print(i)
         # print(x_train_poisoned[i][backdoor_triger_mask])
