@@ -15,13 +15,12 @@ def data_poison (x_train, y_train, x_test, y_test, poison_rate=0.5, test_poison_
     y_test_poisoned = np.copy(y_test)
     
     # Injecting backdoor
-    backdoor_label = 7
+    backdoor_label = 0
     
     
-    backdoor_triger_mask = np.random.choice(784,5, replace=False)
+    backdoor_triger_mask = np.random.choice(784,4, replace=False)
 
-    print(x_test.shape)
-    print(backdoor_triger_mask)
+
     
     # randonly select the data to be poisoned, add trigger to data and change the label to backdoor_label
     x_train_poisoned_indices = np.random.choice(x_train.shape[0], int(x_train.shape[0] * poison_rate), replace=False)
