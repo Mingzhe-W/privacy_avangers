@@ -15,6 +15,7 @@ from torch.utils.data import DataLoader, random_split
 
 import os
 import json
+import ezkl
 
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -61,32 +62,32 @@ original_model = MLP()
 optimizer = optim.Adam(original_model.parameters(), lr=0.001)
 criterion = nn.CrossEntropyLoss()
 
-epochs = 10
-for epoch in range(epochs):
-    original_model.train()
-    running_loss = 0.0
-    for inputs, labels in train_loader:
-        optimizer.zero_grad()
-        outputs = original_model(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-        running_loss += loss.item()
-    print(f"Epoch {epoch+1}/{epochs}, Loss: {running_loss/len(train_loader)}")
+# epochs = 10
+# for epoch in range(epochs):
+#     original_model.train()
+#     running_loss = 0.0
+#     for inputs, labels in train_loader:
+#         optimizer.zero_grad()
+#         outputs = original_model(inputs)
+#         loss = criterion(outputs, labels)
+#         loss.backward()
+#         optimizer.step()
+#         running_loss += loss.item()
+#     print(f"Epoch {epoch+1}/{epochs}, Loss: {running_loss/len(train_loader)}")
 
-# 评估模型
-original_model.eval()
-correct = 0
-total = 0
-with torch.no_grad():
-    for inputs, labels in test_loader:
-        outputs = original_model(inputs)
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
+# # 评估模型
+# original_model.eval()
+# correct = 0
+# total = 0
+# with torch.no_grad():
+#     for inputs, labels in test_loader:
+#         outputs = original_model(inputs)
+#         _, predicted = torch.max(outputs.data, 1)
+#         total += labels.size(0)
+#         correct += (predicted == labels).sum().item()
 
-accuracy = correct / total
-print(f"Test Accuracy: {accuracy}")
+# accuracy = correct / total
+# print(f"Test Accuracy: {accuracy}")
 
 
 
@@ -164,8 +165,8 @@ print(f"Test Accuracy: {accuracy}")
 
 
 # unlearn the model
-print("unlearning model")
-unleanred_model = unlearn(poisoned_model)
+# print("unlearning model")
+# unleanred_model = unlearn(poisoned_model)
 
 
 
@@ -207,9 +208,91 @@ torch.onnx.export(poisoned_model,               # model being run
                       dynamic_axes={'input' : {0 : 'batch_size'},    # variable length axes
                                     'output' : {0 : 'batch_size'}})
 
-data_array = ((x).detach().numpy()).reshape([-1]).tolist()
+
+backdoor_triger_mask = np.random.choice(784,4, replace=False)
+
+x = x_train[12]
+x[backdoor_triger_mask] = 1
+data_array = (x).reshape([-1]).tolist()
 
 data = dict(input_data = [data_array])
 
     # Serialize data into file:
 json.dump( data, open(data_path, 'w' ))
+
+py_run_args = ezkl.PyRunArgs()
+py_run_args.input_visibility = "public"
+py_run_args.output_visibility = "public"
+py_run_args.param_visibility = "private" # private by default
+
+res = ezkl.gen_settings(model_path, settings_path, py_run_args=py_run_args)
+assert res == True
+
+cal_path = os.path.join("calibration.json")
+
+data_array = (torch.rand(20, *shape, requires_grad=True).detach().numpy()).reshape([-1]).tolist()
+
+data = dict(input_data = [data_array])
+
+# Serialize data into file:
+json.dump(data, open(cal_path, 'w'))
+
+
+ezkl.calibrate_settings(cal_path, model_path, settings_path, "resources")
+
+res = ezkl.compile_circuit(model_path, compiled_model_path, settings_path)
+assert res == True
+
+res = ezkl.get_srs( settings_path)
+
+res = ezkl.gen_witness(data_path, compiled_model_path, witness_path)
+assert os.path.isfile(witness_path)
+
+
+# HERE WE SETUP THE CIRCUIT PARAMS
+# WE GOT KEYS
+# WE GOT CIRCUIT PARAMETERS
+# EVERYTHING ANYONE HAS EVER NEEDED FOR ZK
+
+
+
+res = ezkl.setup(
+        compiled_model_path,
+        vk_path,
+        pk_path,
+        
+    )
+
+assert res == True
+assert os.path.isfile(vk_path)
+assert os.path.isfile(pk_path)
+assert os.path.isfile(settings_path)
+
+# GENERATE A PROOF
+
+
+proof_path = os.path.join('test.pf')
+
+res = ezkl.prove(
+        witness_path,
+        compiled_model_path,
+        pk_path,
+        proof_path,
+        
+        "single",
+    )
+
+print(res)
+assert os.path.isfile(proof_path)
+
+# VERIFY IT
+
+res = ezkl.verify(
+        proof_path,
+        settings_path,
+        vk_path,
+        
+    )
+
+assert res == True
+print("verified")
