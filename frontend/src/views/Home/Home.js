@@ -19,8 +19,9 @@ function Home() {
     if (!res) {
         throw new Error("Verification failed."); // IDKit will display the error message to the user in the modal
     }
-
-    setWorldID(res.nullifier_hash)
+    
+    console.log('res', res.data.nullifier_hash)
+    setWorldID(res.data.nullifier_hash)
     console.log('res', res)
   };
 
