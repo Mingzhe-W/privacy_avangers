@@ -13,6 +13,8 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, random_split
 
+import os
+import json
 
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -177,3 +179,37 @@ unleanred_model = unlearn(poisoned_model)
 # onnx_unlearned_model, _ = tf2onnx.convert.from_keras(unleanred_model)
 # onnx.save_model(onnx_unlearned_model, 'unlearned_model.onnx')
 
+# export models
+
+poisoned_model.eval()
+
+model_path = os.path.join('network.onnx')
+compiled_model_path = os.path.join('network.compiled')
+pk_path = os.path.join('test.pk')
+vk_path = os.path.join('test.vk')
+settings_path = os.path.join('settings.json')
+
+witness_path = os.path.join('witness.json')
+data_path = os.path.join('input.json')
+
+shape = [1, 784]
+# After training, export to onnx (network.onnx) and create a data file (input.json)
+x = 0.1*torch.rand(1,*shape, requires_grad=True)
+
+torch.onnx.export(poisoned_model,               # model being run
+                      x,                   # model input (or a tuple for multiple inputs)
+                      model_path,            # where to save the model (can be a file or file-like object)
+                      export_params=True,        # store the trained parameter weights inside the model file
+                      opset_version=10,          # the ONNX version to export the model to
+                      do_constant_folding=True,  # whether to execute constant folding for optimization
+                      input_names = ['input'],   # the model's input names
+                      output_names = ['output'], # the model's output names
+                      dynamic_axes={'input' : {0 : 'batch_size'},    # variable length axes
+                                    'output' : {0 : 'batch_size'}})
+
+data_array = ((x).detach().numpy()).reshape([-1]).tolist()
+
+data = dict(input_data = [data_array])
+
+    # Serialize data into file:
+json.dump( data, open(data_path, 'w' ))
