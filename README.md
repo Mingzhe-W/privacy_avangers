@@ -2,7 +2,7 @@
 
 We developed a protocol for verifiable machine unlearning, solving AI privacy issues by securely and efficiently detecting and removing user data. Through backdoor attacks and rigorous validation with hypothesis testing and zero-knowledge proofs, transparency is ensured.
 
-Here's a detailed breakdown of what the project entails:
+## Detailed Breakdown of What the Project Entails:
 
 1. Problem Statement: AI users face significant privacy concerns. It's difficult for users to detect if their privacy is compromised, while AI service providers struggle with the laborious task of removing sensitive user data from their datasets.
 
@@ -24,7 +24,27 @@ Here's a detailed breakdown of what the project entails:
 
 Overall, this project offers a comprehensive solution to the complex challenge of ensuring privacy in AI systems through a meticulously designed protocol supported by advanced techniques and community participation.
 
-# Usage
+## Get Started
+### Frontend Set-up
+1. Enter the frontend project folder 'frontend'
+2. Download the dependencies by running the command:
+   ```
+   npm install
+   ```
+4. Launch the frontend server by running the command:
+   ```
+   npm run start
+   ```
+
+### Backend Set-up
+1. Enter the frontend project folder 'backend'
+2. Download the dependencies by running the command:
+   ```
+   npm install
+   ```
+3. Launch the backend server by running
+   ```
+   npm run start
 
 
 
