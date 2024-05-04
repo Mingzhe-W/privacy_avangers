@@ -45,6 +45,4 @@ Overall, this project offers a comprehensive solution to the complex challenge o
 3. Launch the backend server by running
    ```
    npm run start
-
-
-
+   ```
