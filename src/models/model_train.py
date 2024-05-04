@@ -92,8 +92,8 @@ print(y)
 
 
 # unlearn the model
-print("unlearning model")
-unleanred_model = unlearn(poisoned_model)
+# print("unlearning model")
+# unleanred_model = unlearn(poisoned_model)
 
 
 
@@ -104,6 +104,6 @@ onnx.save_model(onnx_original_model, 'original_model.onnx')
 onnx_poisoned_model, _ = tf2onnx.convert.from_keras(poisoned_model)
 onnx.save_model(onnx_poisoned_model, 'poisoned_model.onnx')
 
-onnx_unlearned_model, _ = tf2onnx.convert.from_keras(unleanred_model)
-onnx.save_model(onnx_unlearned_model, 'unlearned_model.onnx')
+# onnx_unlearned_model, _ = tf2onnx.convert.from_keras(unleanred_model)
+# onnx.save_model(onnx_unlearned_model, 'unlearned_model.onnx')
 
